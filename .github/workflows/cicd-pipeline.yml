@@ -7,6 +7,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
 # --- Jobs ---
 # A workflow is made up of one or more jobs.
 jobs:
@@ -16,24 +17,24 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-      # Step 1: Check out the repository code
+        # Step 1: Check out the repository code
         - name: Checkout repository
           uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js environment
+        # Step 2: Set up Node.js environment
         - name: Use Node.js 20.x
           uses: actions/setup-node@v4
           with:
             node-version: 20.x
             cache: 'npm' # Cache npm dependencies for faster builds
 
-      # Step 3: Install all dependencies (including devDependencies)
-      # 'npm ci' is recommended for CI as it uses the package-lock.json for a clean install
+        # Step 3: Install all dependencies (including devDependencies)
+        # 'npm ci' is recommended for CI as it uses the package-lock.json for a clean install
         - name: Install dependencies
           run: npm ci
 
-      # Step 4: Run tests
-      # This will execute the test script defined in your package.json
+        # Step 4: Run tests
+        # This will execute the test script defined in your package.json
         - name: Run tests
           run: npm test
 
@@ -64,15 +65,15 @@ jobs:
               context: .
               push: true
               tags: ${{ secrets.DOCKERHUB_USERNAME }}/simple-node-app:${{ github.sha }}
-# (Optional) The "deploy" job is for Continuous Deployment
-deploy:
-  # This job runs only after the image has been successfully pushed
-  needs: build-and-push
-  runs-on: ubuntu-latest
+        # (Optional) The "deploy" job is for Continuous Deployment
+        deploy:
+          # This job runs only after the image has been successfully pushed
+          needs: build-and-push
+          runs-on: ubuntu-latest
 
-  steps:
-    - name: Deploy to production
-      run: |
-        echo "This is where you would add your deployment script."
-        echo "For example, you could SSH into your server and run 'docker pull' and 'docker run'."
-        echo "Deploying image: ${{ secrets.DOCKERHUB_USERNAME }}/simple-node-app:${{ github.sha }}"
+          steps:
+            - name: Deploy to production
+              run: |
+                echo "This is where you would add your deployment script."
+                echo "For example, you could SSH into your server and run 'docker pull' and 'docker run'."
+                echo "Deploying image: ${{ secrets.DOCKERHUB_USERNAME }}/simple-node-app:${{ github.sha }}"
